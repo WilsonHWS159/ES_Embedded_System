@@ -55,4 +55,90 @@ This is the hw02 sample. Please follow the steps below.
 
 --------------------
 
-Please take your note here.
+# HW02_Example performed and observation
+### Emulation by qemu
+`qemu` is defined in `Makefile` that will create a qemu server with port `1234`.
+```cmake
+qemu:
+    @echo
+    @echo "Press Ctrl+A and then press X to exit QEMU"
+    @echo
+    $(QEMU) -M STM32F4-Discovery -nographic -gdb tcp::1234 -S -kernel main.bin
+```
+1. Use command `make qemu` to start emulation.
+```bash
+$    make qemu
+```
+![](https://i.imgur.com/DZ7lRzs.png)
+
+2. Start GNU Debugger with command `arm-none-eabi-gdb`
+```bash
+$    arm-none-eabi-gdb
+```
+![](https://i.imgur.com/lOJoTZN.png)
+
+3. Connect to the qemu server by localhost
+```bash
+(gdb)    target remote 127.0.0.1:1234
+```
+![](https://i.imgur.com/M6vJXaJ.png)
+
+4. Press `Ctrl + X` two times and show registers with command `layout regs`
+```bash
+(gdb)    layout regs
+```
+![](https://i.imgur.com/ZgJ4psd.png)
+
+5. Use `si` or `stepi` to execute one instruction.
+
+## observation
+`main.s` is the sample that can help us to distinguish the main difference between the `b` and the `bl` instructions.
+```thumb2
+.syntax unified
+
+.word 0x20000100
+.word _start
+
+.global _start
+.type _start, %function
+_start:
+	nop
+
+	//
+	//branch w/o link
+	//
+	b	label01
+
+label01:
+	nop
+
+	//
+	//branch w/ link
+	//
+	bl	sleep
+
+sleep:
+	nop
+	b	.
+```
+
+|label|address|
+|:-:|:-:|
+|`_start`|`0x8`|
+|`label01`|`0xe`|
+|`sleep`|`0x12`|
+
+GDB will show the disassembly instructions and the address of these instructions.
+![](https://i.imgur.com/zuuILui.png)
+
+When the second instruction (`b    label01`) executed, the `lr` register is still `0`
+![](https://i.imgur.com/0gcsUvV.png)
+
+Until the forth instruction (`bl    sleep`) executed, the `lr` register stored `0x13` which is the address of the next instruction of the branch.
+
+The reason of the address is `0x13` instead of `0x12` is the LSB contains the information that the next instrction is a `Thumb-2` instruction.
+
+![](https://i.imgur.com/fjtIRTp.png)
+
+After the sixth instruction (`b    .`) executed, the `lr` register is still `0x13`.
+![](https://i.imgur.com/6O96ioG.png)
