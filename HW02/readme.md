@@ -56,7 +56,7 @@ This is the hw02 sample. Please follow the steps below.
 --------------------
 
 # HW02_Example performed and observation
-### Emulation by qemu
+## Emulation by qemu
 `qemu` is defined in `Makefile` that will create a qemu server with port `1234`.
 ```cmake
 qemu:
@@ -142,3 +142,113 @@ The reason of the address is `0x13` instead of `0x12` is the LSB contains the in
 
 After the sixth instruction (`b    .`) executed, the `lr` register is still `0x13`.
 ![](https://i.imgur.com/6O96ioG.png)
+
+# HW02 performed and observation
+
+*    Edit `main.s` for observe `push` and `pop` instructions
+```Thumb-2
+.syntax unified
+
+.word 0x20000100
+.word _start
+
+.global _start
+.type _start, %function
+
+_start:
+
+    movs    r0, #1
+    movs    r1, #2
+    movs    r2, #3
+
+    push    {r0, r1, r2}
+    pop     {r3, r4, r5}
+
+    push    {r2, r1, r0}
+    pop     {r3, r4, r5}
+
+    push    {r0}
+    push    {r1}
+    push    {r2}
+    pop     {r3, r4, r5}
+
+    push    {r2}
+    push    {r1}
+    push    {r0}
+    pop     {r3, r4, r5}
+
+    b       sleep
+
+sleep:
+    b       .
+
+```
+
+*    Store `1, 2, 3` into `r0, r1, r2` respectively.
+
+![](https://i.imgur.com/UOkJacH.png)
+
+*    Push the value of `r0, r1, r2` by the order `{r0, r1, r2}` into stack.
+        *    Stack pointer `sp` `0x20000100` $\rightarrow$ `0x200000f4`
+
+![](https://i.imgur.com/vS0Ot4n.png)
+
+*    Pop these values out of stack
+        *    Stack pointer `sp` `0x200000f4` $\rightarrow$ `0x20000100`
+        *    `r3` is `1`
+        *    `r4` is `2`
+        *    `r5` is `3`
+
+![](https://i.imgur.com/b2mAdwg.png)
+
+*    Push the value of `r0, r1, r2` by the order `{r2, r1, r0}` into stack
+In GDB, it shows that the assembler change the order of these registers .automatically.
+        *    Stack pointer `sp` `0x20000100` $\rightarrow$ `0x200000f4`
+
+![](https://i.imgur.com/bzZpMfQ.png)
+
+*    Pop these values out of stack
+        *    Stack pointer `sp` `0x200000f4` $\rightarrow$ `0x20000100`
+        *    `r3` is `1`
+        *    `r4` is `2`
+        *    `r5` is `3`
+
+![](https://i.imgur.com/TfAV4tc.png)
+
+*    Push the value of `r0, r1, r2` by the order `{r0, r1, r2}`, but only push one value in one instruction
+        *    Stack pointer `sp` `0x20000100` $\rightarrow$ `0x200000f4`
+
+![](https://i.imgur.com/QB27Jfs.png)
+
+*    Pop these values out of stack
+        *    Stack pointer `sp` `0x200000f4` $\rightarrow$ `0x20000100`
+        *    `r3` is `3`
+        *    `r4` is `2`
+        *    `r5` is `1`
+
+![](https://i.imgur.com/OTVbX2i.png)
+
+*    Push the value of `r0, r1, r2` by the order `{r2, r1, r0}`, but only push one value in one instruction
+        *    Stack pointer `sp` `0x20000100` $\rightarrow$ `0x200000f4`
+
+![](https://i.imgur.com/rMK0tP2.png)
+
+*    Pop these values out of stack
+        *    Stack pointer `sp` `0x200000f4` $\rightarrow$ `0x20000100`
+        *    `r3` is `1`
+        *    `r4` is `2`
+        *    `r5` is `3`
+
+![](https://i.imgur.com/q7zHLhx.png)
+
+## Conclusion
+Let make a sheet to clarify these operations.
+||`push {r0, r1, r2}`|`pop`|`push {r2, r1, r0}`|`pop`|`push {r0}, {r1}, {r2}`|`pop`|`push {r2}, {r1}, {r0}`|`pop`|
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|**`r3`**||1||1||3||1|
+|**`r4`**||2||2||2||2|
+|**`r5`**||3||3||1||3|
+
+According to the sheet, it can tells that no matter which registers you put in the brackets, assembler will reorder the sequence to descending order.
+
+
