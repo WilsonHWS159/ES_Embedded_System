@@ -1,12 +1,12 @@
+#ifndef REG_H
+
 #include <stdint.h>
 #include "reg.h"
 
-/**
- * 
- * LED init
- * 
- */
-void led_init(unsigned int led)
+#endif
+
+/* LED init */
+void led_init(uint8_t led)
 {
 	SET_BIT(RCC_BASE + RCC_AHB1ENR_OFFSET, GPIO_EN_BIT(GPIO_PORTD));
 
@@ -26,56 +26,44 @@ void led_init(unsigned int led)
 	CLEAR_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_PUPDR_OFFSET, PUPDRy_0_BIT(led));
 }
 
-/**
- * 
- * blink LED forever
- * 
- */
-void blink(unsigned int led)
+/* blink LED forever */
+void blink(uint8_t led)
 {
-	led_init(led);
-
+	//led_init(led);
 	unsigned int i;
-
 	while (1)
 	{
 		//set GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BSy_BIT(led));
 
-		for (i = 0; i < 100000; i++)
+		for (i = 100000; i--;)
 			;
 
 		//reset GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BRy_BIT(led));
 
-		for (i = 0; i < 100000; i++)
+		for (i = 100000; i--;)
 			;
 	}
 }
 
-/**
- * 
- * blink LED x count
- * 
- */
-void blink_count(unsigned int led, unsigned int count)
+/* blink LED x count */
+void blink_count(uint8_t led, uint32_t count)
 {
-	led_init(led);
-
-	unsigned int i;
-
+	//led_init(led);
+	uint32_t i;
 	while (count--)
 	{
 		//set GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BSy_BIT(led));
 
-		for (i = 0; i < 100000; i++)
+		for (i = 100000; i--;)
 			;
 
 		//reset GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BRy_BIT(led));
 
-		for (i = 0; i < 100000; i++)
+		for (i = 100000; i--;)
 			;
 	}
 }
