@@ -6,7 +6,7 @@
 #define LED_RED 14
 #define LED_BLUE 15
 
-void blink(unsigned int led);
-void blink_count(unsigned int led, unsigned int count);
+void blink(uint8_t led);
+void blink_count(uint8_t led, uint32_t count);
 
 #endif
