@@ -2,7 +2,7 @@ CROSS-COMPILER = arm-none-eabi-
 
 all: clock.bin
 
-clock.bin: main.c blink.c startup.c vector_table.s
+clock.bin: main.c blink.c startup.c vector_table.s reg.h
 	$(CROSS-COMPILER)gcc -Wall -std=c11 -mcpu=cortex-m4 -mthumb -nostartfiles -T stm32f4.ld main.c blink.c startup.c vector_table.s -o clock.elf
 	$(CROSS-COMPILER)objcopy -O binary clock.elf clock.bin
 

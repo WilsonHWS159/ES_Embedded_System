@@ -37,19 +37,17 @@ void blink(unsigned int led)
 
 	unsigned int i;
 
-	while (1)
+	for (;;)
 	{
 		//set GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BSy_BIT(led));
 
-		for (i = 0; i < 500000; i++)
-			;
+		for (i = 500000; i--;);
 
 		//reset GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BRy_BIT(led));
 
-		for (i = 0; i < 500000; i++)
-			;
+		for (i = 500000; i--;);
 	}
 }
 
@@ -68,14 +66,10 @@ void blink_count(unsigned int led, unsigned int count)
 	{
 		//set GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BSy_BIT(led));
-
-		for (i = 0; i < 500000; i++)
-			;
+		for (i = 500000; i--;);
 
 		//reset GPIOD led pin
 		SET_BIT(GPIO_BASE(GPIO_PORTD) + GPIOx_BSRR_OFFSET, BRy_BIT(led));
-
-		for (i = 0; i < 500000; i++)
-			;
+		for (i = 500000; i--;);
 	}
 }
