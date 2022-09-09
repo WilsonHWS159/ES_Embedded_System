@@ -9,5 +9,8 @@ hardfault.bin: hardfault.s
 flash:
 	st-flash --reset write hardfault.bin 0x8000000
 
+varify:
+	st-util -p 1234
+
 clean:
 	rm -f *.o *.elf *.bin

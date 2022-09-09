@@ -29,13 +29,11 @@ void reset_handler(void)
 	src_ptr = mydata_lstart_ptr;
 	dst_ptr = mydata_vstart_ptr;
 
-	while (dst_ptr < mydata_vend_ptr)
-		*dst_ptr++ = *src_ptr++;
+	for (; dst_ptr < mydata_vend_ptr; *dst_ptr++ = *src_ptr++);
 
 	dst_ptr = mybss_vstart_ptr;
 
-	while (dst_ptr < mybss_vend_ptr)
-		*dst_ptr++ = 0;
+	for (; dst_ptr < mybss_vend_ptr; *dst_ptr++ = 0);
 
 	set_sysclk_pll();
 
@@ -58,8 +56,7 @@ void set_sysclk_pll(void)
 	SET_BIT(RCC_BASE + RCC_CR_OFFSET, HSEON_BIT);
 
 	//wait
-	while (READ_BIT(RCC_BASE + RCC_CR_OFFSET, HSERDY_BIT) != 1)
-		;
+	for (; READ_BIT(RCC_BASE + RCC_CR_OFFSET, HSERDY_BIT) != 1;);
 
 	//set pll
 	SET_BIT(RCC_BASE + RCC_PLLCFGR_OFFSET, PLLSRC_BIT); //use HSE for PLL source
@@ -83,8 +80,7 @@ void set_sysclk_pll(void)
 	SET_BIT(RCC_BASE + RCC_CR_OFFSET, PLLON_BIT);
 
 	//wait
-	while (READ_BIT(RCC_BASE + RCC_CR_OFFSET, PLLRDY_BIT) != 1)
-		;
+	for (; READ_BIT(RCC_BASE + RCC_CR_OFFSET, PLLRDY_BIT) != 1;);
 
 	//enable flash prefetch buffer
 	SET_BIT(FLASH_BASE + FLASH_ACR_OFFSET, PRFTEN_BIT);
@@ -97,6 +93,5 @@ void set_sysclk_pll(void)
 	CLEAR_BIT(RCC_BASE + RCC_CFGR_OFFSET, SW_0_BIT);
 
 	//wait
-	while (READ_BIT(RCC_BASE + RCC_CFGR_OFFSET, SWS_1_BIT) != 1 || READ_BIT(RCC_BASE + RCC_CFGR_OFFSET, SWS_0_BIT) != 0)
-		;
+	for (; READ_BIT(RCC_BASE + RCC_CFGR_OFFSET, SWS_1_BIT) != 1 || READ_BIT(RCC_BASE + RCC_CFGR_OFFSET, SWS_0_BIT) != 0;);
 }
