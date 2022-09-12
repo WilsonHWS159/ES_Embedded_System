@@ -10,7 +10,9 @@ SECTIONS
 	{
 		KEEP(*(.vector_table))
 		*(.text)
+		*(.text.*)
 		*(.rodata)
+		*(.rodata.*)
 		_mydata_lma_start = .; /* LMA is equivalent to VMA in this section */
 	} > FLASH
 
@@ -18,6 +20,7 @@ SECTIONS
 	{
 		_mydata_vma_start = .;
 		*(.data)
+		*(.data.*)
 		_mydata_vma_end = .;
 	} > SRAM
 
@@ -25,6 +28,7 @@ SECTIONS
 	{
 		_mybss_vma_start = .;
 		*(.bss)
+		*(.bss.*)
 		*(COMMON)
 		_mybss_vma_end = .;
 	} > SRAM
