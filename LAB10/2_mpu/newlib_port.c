@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include "reg.h"
 #include "usart.h"
 
@@ -54,4 +55,18 @@ int _fstat(int file, struct stat *st)
 int _isatty(int file)
 {
 	return 1;
+}
+
+void _exit() {}
+
+int _getpid(void)
+{
+	return 1;
+}
+
+extern int errno;
+int _kill(int pid, int sig)
+{
+	errno = EINVAL;
+	return -1;
 }
