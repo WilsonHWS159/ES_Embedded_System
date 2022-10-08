@@ -22,17 +22,14 @@ read_ctrl:
 
 .global	start_user
 start_user:
-	sub		sp, #0x8
-	add		r7, sp, #0x0
-	str		r0, [r7, #0x4]
-	str		r1, [r7, #0x0]
-	msr		psp, r1
-	mov		r2, 0x3
-	msr		control, r2
-	ISB
-	ldr		r3, [r7, #4]
-	bx		r3
+	movs	lr,	r0
+	msr	psp,	r1
 
+	movs	r3,	#0x3
+	msr	control,	r3
+	isb
+
+	bx	lr
 
 .global	sw_priv
 sw_priv:
