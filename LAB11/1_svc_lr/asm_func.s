@@ -25,7 +25,7 @@ start_user:
 	movs	lr,	r0
 	msr	psp,	r1
 
-	movs	r3,	#0b11
+	movs	r3,	#0x3
 	msr	control,	r3
 	isb
 
@@ -33,9 +33,11 @@ start_user:
 
 .global	sys_call
 sys_call:
-	??????
+	svc	#0x0
+	bx	lr
 
 .type svc_handler, %function
 .global svc_handler
 svc_handler:
-	??????
+	mov	r0, lr
+	b	svc_handler_c

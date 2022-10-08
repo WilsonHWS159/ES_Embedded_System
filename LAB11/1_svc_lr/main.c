@@ -52,9 +52,9 @@ void user_task(void)
 	blink(LED_BLUE); //should not return
 }
 
-void svc_handler_c(??????)
+void svc_handler_c(unsigned int lr_value)
 {
-	printf("[SVC Handler] LR: 0x%X\r\n", (unsigned int)??????);
+	printf("[SVC Handler] LR: 0x%X\r\n", (unsigned int)lr_value);
 	printf("[SVC Handler] Control: 0x%X\r\n", (unsigned int)read_ctrl());
 	printf("[SVC Handler] SP: 0x%X \r\n", (unsigned int)read_sp());
 	printf("[SVC Handler] MSP: 0x%X \r\n", (unsigned int)read_msp());
